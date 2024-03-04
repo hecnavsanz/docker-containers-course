@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nodejs-app-docker
+spec:
+  selector:
+    matchLabels:
+      app: nodejs-app-docker
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: nodejs-app-docker
+    spec:
+      containers:
+      - name: nodejs-app-docker
+        image: hectornsanz/demo:nodejs-app-img
+        ports:
+        - containerPort: 8080
+      imagePullSecrets:
+      - name: regcred
+      tolerations:
+      - key: "node.kubernetes.io/unreachable"
+        operator: "Exists"
+        effect: "NoExecute" 
+        tolerationSeconds: 15
+      - key: "node.kubernetes.io/not-ready"
+        operator: "Exists"
+        effect: "NoExecute"
+        tolerationSeconds: 15

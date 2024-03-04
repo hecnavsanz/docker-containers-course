@@ -1,0 +1,6 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: echo-dp
+  namespace: mod-07-ns

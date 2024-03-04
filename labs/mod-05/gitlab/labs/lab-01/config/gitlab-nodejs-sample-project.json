@@ -1,0 +1,7 @@
+{
+    "name": "sample-prj",
+    "description": "Sample Node.JS Project",
+    "path": "sample-prj",
+    "namespace_id": "",
+    "initialize_with_readme": "true"
+}

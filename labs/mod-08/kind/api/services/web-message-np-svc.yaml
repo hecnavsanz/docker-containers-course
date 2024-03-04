@@ -1,0 +1,19 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: web-message-np-svc
+  namespace: mod-08-ns
+  labels:
+    app: web-message
+spec:
+  type: NodePort
+  selector:
+      web: msg
+      env: dev
+  ports:
+    - name: web-message-app-port
+      protocol: TCP
+      port: 8080
+      targetPort: 80
+      nodePort: 30008

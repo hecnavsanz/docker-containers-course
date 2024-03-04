@@ -1,0 +1,3 @@
+# files or dirs to not be included by ADD or COPY commands
+
+node_project/TUTU.txt

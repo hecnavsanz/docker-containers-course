@@ -1,0 +1,5 @@
+- hosts:
+    rnr
+  roles: 
+    - labs-00
+    

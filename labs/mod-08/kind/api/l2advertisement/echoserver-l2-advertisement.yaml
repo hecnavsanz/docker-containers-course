@@ -1,0 +1,14 @@
+---
+apiVersion: metallb.io/v1beta1
+kind: L2Advertisement
+metadata:
+  name: echo-worker--nodes
+  namespace: metallb-system
+spec:
+  ipAddressPools:
+  - echo-ip-addr-pool
+  nodeSelectors:
+  - matchLabels:
+      kubernetes.io/hostname: 1cp-2wn-worker
+  - matchLabels:
+      kubernetes.io/hostname: 1cp-2wn-worker2

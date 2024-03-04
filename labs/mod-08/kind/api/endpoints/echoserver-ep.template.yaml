@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: Endpoints
+metadata:
+  name: echo-app-ep-np-svc
+  namespace: mod-08-ns
+  labels:
+    rsc: echo-app
+subsets:
+  - addresses:
+      # this is the echo-pod-1
+      - ip: <echo-pod-1-ip-addr>
+        nodeName: <echo-pod-1-worker-node>
+        targetRef:
+          kind: Pod
+          namespace: mod-08-ns
+          name: echo-pod-1
+      # this is the echo-pod-2
+      - ip: <echo-pod-2-ip-addr>
+        nodeName: <echo-pod-2-worker-node>
+        targetRef:
+          kind: Pod
+          namespace: mod-08-ns
+          name: echo-pod-2
+    ports:
+      - name: echo-app-port
+        port: 8080
+        protocol: TCP

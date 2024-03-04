@@ -1,0 +1,7 @@
+FROM scratch
+
+COPY helloworld .
+
+EXPOSE 8888
+
+CMD ["./helloworld"]

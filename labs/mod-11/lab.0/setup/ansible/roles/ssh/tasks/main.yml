@@ -1,0 +1,76 @@
+---
+- name: setup ssh pwdless auth
+  become: true
+  become_user: root
+  block:
+    - name: setup ssh password authentication
+      ansible.builtin.lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: '^PasswordAuthentication'
+        line: PasswordAuthentication yes
+      tags:
+        - setup_ssh_pwd_auth
+    - name: setup ssh root login
+      ansible.builtin.lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: '^#PermitRootLogin'
+        line: PermitRootLogin yes
+      tags:
+        - setup_ssh_root_login
+    - name: restart sshd
+      ansible.builtin.systemd: 
+        name: sshd
+        state: restarted
+        enabled: yes
+      tags: 
+        - restart_sshd
+    - name: install sshpass pkg
+      ansible.builtin.apt: 
+        name: 
+          - sshpass
+        state: present
+        update_cache: true
+      tags: 
+        - inst_sshpass_pkg
+    - name: setup ssh dir
+      ansible.builtin.file:
+        path: /root/.ssh
+        state: directory
+        mode: '0700'
+      tags:
+        - setup_ssh_dir
+    - name: setup ssh rsa key file
+      ansible.builtin.command: ssh-keygen -t rsa -f /root/.ssh/{{ item }}_id_rsa -q -N "" -C "root@{{ item }}"
+      with_list:
+        - "{{ gitlabrnr_hostname }}-priv.{{ domain }}"
+        - "{{ gitlabsrv_hostname }}-priv.{{ domain }}"
+      tags: 
+        - setup_ssh_rsa_pk
+    - name: setup ssh config
+      ansible.builtin.blockinfile:
+        path: /root/.ssh/config
+        create: yes
+        mode: '0600'
+        block: | 
+              Host {{ gitlabsrv_hostname }}-priv.{{ domain }}
+                User root
+                ServerAliveInterval 30
+                ServerAliveCountMax 2
+                StrictHostKeyChecking no
+                IdentityFile /root/.ssh/{{ gitlabsrv_hostname }}-priv.{{ domain }}_id_rsa
+              Host {{ gitlabrnr_hostname }}-priv.{{ domain }}
+                User root
+                ServerAliveInterval 30
+                ServerAliveCountMax 2
+                StrictHostKeyChecking no
+                IdentityFile /root/.ssh/{{ gitlabrnr_hostname }}-priv.{{ domain }}_id_rsa
+      tags:
+        - setup_ssh_conf
+    - name: setup ssh passwordless auth
+      ansible.builtin.command: sshpass -p "{{ lab_user_pwd }}" ssh-copy-id -f -i /root/.ssh/{{ item }}_id_rsa.pub -o StrictHostKeyChecking=no root@{{ item }}
+      with_list:
+        - "{{ gitlabrnr_hostname }}-priv.{{ domain }}"
+        - "{{ gitlabsrv_hostname }}-priv.{{ domain }}"
+      tags:
+        - setup_ssh_pwdless
+  tags: setup_ssh_pwdless_auth

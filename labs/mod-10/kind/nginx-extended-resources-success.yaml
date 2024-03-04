@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx-ext-success
+  namespace: lab-03-ns
+spec:
+  containers:
+  - name: nginx-ext-success
+    image: nginx
+    resources:
+      requests:
+        example.com/dongle: 3
+      limits:
+        example.com/dongle: 3

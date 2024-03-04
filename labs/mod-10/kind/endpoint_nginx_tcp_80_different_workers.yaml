@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: Endpoints
+metadata:
+  name: nginx-web
+  namespace: lab-03-ns
+  labels:
+    app: nginx-app
+subsets:
+  - addresses:
+      - ip: 10.244.2.4
+        nodeName: cluster-c-worker
+        targetRef:
+          kind: Pod
+          namespace: lab-03-ns
+          name: nginx-pod1
+      - ip: 10.244.3.2
+        nodeName: cluster-c-worker2
+        targetRef:
+          kind: Pod
+          namespace: lab-03-ns
+          name: nginx-pod2
+    ports:
+      - name: nginx-tcp-80
+        port: 80
+        protocol: TCP

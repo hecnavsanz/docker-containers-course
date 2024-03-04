@@ -1,0 +1,112 @@
+
+	https://helm.sh/docs/
+
+	.\kind\bin\kind.exe delete cluster --name=1cp-2wn
+
+	.\kind\bin\kind.exe create cluster --name=1cp-2wn --config=labs/mod-07/kind/config/cluster-1cp-2wn.yaml
+
+	.\kubectl\bin\kubectl.exe get nodes --context=kind-1cp-2wn --output=wide
+
+	.\kubectl\bin\kubectl.exe apply -f .\labs\mod-10\kind\components.yaml --context=kind-1cp-2wn
+
+	.\helm\bin\helm.exe version
+
+	.\helm\bin\helm.exe repo list
+
+	.\helm\bin\helm.exe repo add argo https://argoproj.github.io/argo-helm
+
+	.\helm\bin\helm.exe repo remove argo
+
+	.\helm\bin\helm.exe search repo prometheus
+
+	https://prometheus.io/
+
+	https://github.com/kubernetes/kube-state-metrics/blob/main/docs/pod-metrics.md
+
+	count(kube_pod_info{namespace="default"})
+
+	.\helm\bin\helm.exe --help
+
+	.\helm\bin\helm.exe list
+
+	.\helm\bin\helm.exe uninstall --wait <release-name>
+
+	.\helm\bin\helm.exe install prometheus-kind prometheus-community/prometheus
+
+	.\helm\bin\helm.exe status prometheus-kind
+
+	.\helm\bin\helm.exe uninstall --wait prometheus-kind
+
+	.\kubectl\bin\kubectl.exe create namespace prometheus-ns --context=kind-1cp-2wn
+
+	.\helm\bin\helm.exe install prometheus-kind prometheus-community/prometheus --kube-context=kind-1cp-2wn --namespace=prometheus-ns
+
+	.\helm\bin\helm.exe list --all --kube-context=kind-1cp-2wn --namespace=prometheus-ns
+
+	.\helm\bin\helm.exe status prometheus-kind --kube-context=kind-1cp-2wn --namespace=prometheus-ns
+
+	PromQL: count(kube_pod_info{namespace="prometheus-ns"})
+
+	.\helm\bin\helm.exe show values prometheus-community/prometheus
+
+	.\helm\bin\helm.exe uninstall --wait prometheus-kind --kube-context=kind-1cp-2wn --namespace=prometheus-ns
+
+	.\helm\bin\helm.exe install prometheus-kind prometheus-community/prometheus --kube-context=kind-1cp-2wn --namespace=prometheus-ns --set server.hostPort=9999 --set server.retention="30d"
+
+	https://github.com/prometheus-community/helm-charts
+
+	.\helm\bin\helm.exe list --all --kube-context=kind-1cp-2wn --namespace=prometheus-ns
+
+	Cluster Settings:
+
+	Metrics:
+
+	Prometheus = HELM
+
+	Prometheus Service Address = prometheus-ns/prometheus-kind-server:80
+
+	notepad .\labs\mod-08\kind\api\pods\sharks.yaml
+
+	apiVersion: v1
+	kind: Pod
+	metadata:
+	  name: sharks-pod
+	  labels:
+	    app: sharks
+	spec:
+	  containers:
+	    - name: sharks-cntr
+	      image: hectornsanz/sharks:1.0
+	      ports:
+	        - name: web
+	          containerPort: 8080
+	          protocol: TCP
+	      resources:
+	        requests:
+	          memory: "64Mi"
+	          cpu: "0.5"
+	        limits:
+	          memory: "128Mi"
+	          cpu: "1.0"
+
+	.\kubectl\bin\kubectl.exe apply -f .\labs\mod-08\kind\api\pods\sharks.yaml --context=kind-1cp-2wn --namespace=default
+
+	.\helm\bin\helm.exe search repo grafana
+
+	.\helm\bin\helm.exe repo update
+
+	.\kubectl\bin\kubectl.exe create namespace grafana-ns --context=kind-1cp-2wn
+
+	.\helm\bin\helm.exe install grafana-kind grafana/grafana --kube-context=kind-1cp-2wn --namespace=grafana-ns
+
+	.\helm\bin\helm.exe repo add grafana https://grafana.github.io/helm-charts
+
+	.\helm\bin\helm.exe repo update
+
+	.\helm\bin\helm.exe status grafana-kind --kube-context=kind-1cp-2wn --namespace=grafana-ns
+
+	.\helm\bin\helm.exe status grafana-kind --kube-context=kind-1cp-2wn --namespace=grafana-ns
+	https://grafana.com/grafana/
+	en Grafana -> Data sources -> Prometheus
+	Name: Prometheus-kind-ns
+	https://grafana.com/grafana/dashboards/315-kubernetes-cluster-monitoring-via-prometheus/

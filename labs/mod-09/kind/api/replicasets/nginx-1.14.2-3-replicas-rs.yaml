@@ -1,0 +1,24 @@
+---
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: nginx-rs
+  namespace: mod-07-ns
+  labels:
+    rsc: nginx-rs
+spec:
+  replicas: 3
+  selector:
+      matchLabels:
+        app: nginx-rs
+  template:
+    metadata:
+      name: nginx-pod
+      labels:
+        app: nginx-rs
+    spec:
+      containers:
+      - name: nginx-cntr
+        image: nginx:1.14.2
+        ports:
+        - containerPort: 80

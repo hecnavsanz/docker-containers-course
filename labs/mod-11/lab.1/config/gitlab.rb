@@ -1,0 +1,11 @@
+external_url 'https://gitlab.core.io:8929/'
+gitlab_rails['initial_root_password'] = File.read('/run/secrets/gitlab_root_pwd').gsub("\n", "")
+
+gitlab_rails['registry_enabled'] = true
+gitlab_rails['registry_api_url'] = "https://gitlab-registry.core.io:5000"
+# gitlab_rails['registry_issuer'] = "gitlab-issuer"
+gitlab_rails['registry_host'] = "gitlab-registry.core.io"
+gitlab_rails['registry_port'] = "5000"
+registry['internal_key'] = "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDJaCi/lSm0WaT1\nWhuxe247YmOXyxRSZUd/KiEJc0UtLKMU9uWbhRcgGSREKK//AgosycOsAJ8aNR/y\ni4g82JpZmyyJRcKeYf/Bb6f3h/f6s8VBquAeT8IthXUjeo9bOGGmREmvVOyRjDSY\nnQJ53WUbfNwexRBiZQCSSZnLxaKX7V2hxnGyy8yEAJT+IkfD68w+ldDtbGkHoFSE\nG/WzCQWtynYNHRQt/4VkrdLeINR6fUXxrtDJmA3gyYBi+K35iqKEs5Ow91Th0FJT\nd0BapIcXESepSu6V2ujkWVf40ouXtD+/17KQfMk/MIbJ+Rzn0qarqWrFvT2GMiuY\nqiKSpzndAgMBAAECggEBAKAfLh46MYDPsETbkZ7F2bpem31Hl+111aS00rUXroye\nqzz0mVDOO7dqJZoGmv1rGrnG4sixacxFJhQHeJWfQv8wTfUIwBR5JwMbiPdTYwQu\nvglaF3ohwOe97YX6X1SPe5rbOZWqN7XzOLGISjqmmEaFOt8/nqoLUKv81cfaZUzQ\nn+RnoI2iT5y7vT7f99/PsYPjDWOeRTHbkeRLzQZuqiDUlH7z1ZDktpGIEk/qtU67\niGwwhquAhiWPer2B+yrcvf2F9YkA5yOlbDcIPiEblA5QWjsdWIOFO9A0kYy+9YQg\ngjQfpOgKvty4c7EsmAcdGNm9CcCgsvHek+um9EJ1ZWECgYEA+eu9BNNFK4fSL0+D\nRjyv9wNkHOnrxGmNXYuwWE3dPcoKtmNpfMkNJL1D1Q/T6ucz06ssQILKqy57b5TO\nEeNZwfAlVzfydVXs4pqxlMFt9nW/N4z0WmLZy/SQF9eY716NSyIsxRa/+ZtEn/MB\nMgWNYxqFBtOIAI5v3VReaQiSWIkCgYEAzk5SyWFcmA6sYB4ALGr9MOvUvch0or/x\nY16H8E1E5SQqFitnAmsK+fV9JPheTzhvXefz9FYx4UEHlQ2QkC6y+ntt09fedwRq\nOE/OXbrmhVb+cBibK8gPzWMwW7Y1u3oDW1JDacPaJi6CusORswVEiDKGw1NbeJLe\n6EeDwIdvWbUCgYBTSQwkn4NdjlWtDoJg1biOSMMEH7BCNCq4EeUiiFBCVyJaxaZR\nv25x3+DLEAs/LO1IjLKijPOdOFBKTvydWXZ/+td2yV4zW/8lRQgI2q0ahQLEMGT9\n+hM6tLWQPHjqzEep0im5RGuVcvjblM/BK7iCXkQWkkewZ8c/qu4Lcp/SgQKBgEFZ\n3i+cf9BLFZ984WEwovOUQNe9X/UOCFEJ6NXeJCzRv+M17HN/pQJ5GSNU6cr+fYip\nqUWE6FgKWXSFz31czaU65BdvEjFxXJRp810Nj2g9nmuz37OGtDrDaNYkafDxPY74\nCBLAz6G4qgCvYr/qs0LRfo7xINCY9bNus/WQ8VzhAoGAdwCozhmw/os1tAG1B4cn\nb27daaUISI9Sjh9Ar93fVxClX4MKwkUM1j9ZaVwnQQzx+TDtmNii7Pzf+Yt7/Yez\nqQDgMINrQIU1kAB/SM8Zp+GAJmpHIL4iwVYiUSOtW5RQ39tzHFMgbRvtoLiuXuhQ\nj/i0hEmmeIwUJ1q9GSFFjLA=\n-----END PRIVATE KEY-----"
+# gitlab_rails['registry_key_path'] = "/custom/path/to/registry-key.key"
+

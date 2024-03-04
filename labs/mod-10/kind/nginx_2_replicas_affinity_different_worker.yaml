@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-affin-dp
+  namespace: default
+spec:
+  selector:
+    matchLabels:
+      app: nginx-affin-app
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: nginx-affin-app
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution: # preferredDuringSchedulingIgnoredDuringExecution: more flexible bcz it creates the pod even not complaining.
+            nodeSelectorTerms:
+            -  matchExpressions:
+               - key: kubernetes.io/arch
+                 operator: In
+                 values:
+                 - amd64
+      containers:
+      - name: nginx-affin
+        image: nginx:1.14.2

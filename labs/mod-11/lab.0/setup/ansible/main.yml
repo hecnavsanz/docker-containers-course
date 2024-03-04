@@ -1,0 +1,11 @@
+- hosts:
+    srv
+    rnr
+  roles: 
+    - system
+    - dns
+    - ntp
+    - ssh
+    - docker
+    - gitlab
+    - nodejs

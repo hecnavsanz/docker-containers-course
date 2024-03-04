@@ -1,0 +1,28 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx-pv-pod
+  namespace: default
+spec:
+  volumes:
+    - name: nginx-html-vol
+      persistentVolumeClaim:
+        claimName: html-pv-claim
+  containers:
+    - name: nginx-pv-cntr
+      image: nginx
+      ports:
+        - containerPort: 80
+          name: "http-server"
+      volumeMounts:
+        - mountPath: "/usr/share/nginx/html"
+          name: nginx-html-vol
+      resources:
+        requests:
+          memory: "500Mi"
+          cpu: "0.5"
+          ephemeral-storage: "2Gi"
+        limits:
+          memory: "1000Mi"
+          cpu: "1"
+          ephemeral-storage: "3Gi"

@@ -1,0 +1,51 @@
+---
+- name: setup sytems environment
+  become: true
+  become_user: root
+  block:
+    - name: install system packages
+      ansible.builtin.apt: 
+        name: 
+          - curl
+          - openssh-server
+          - ca-certificates
+          - tzdata
+          - perl
+          - net-tools
+          - unzip
+        state: present
+        update_cache: true
+      tags: 
+        - inst_system_pkgs
+    - name: set root password 
+      ansible.builtin.user:
+        name: root
+        update_password: always
+        password: "{{ lab_user_pwd | password_hash( 'sha512' ) }}"
+      tags: 
+        - set_root_pwd
+    - name: create lab group
+      ansible.builtin.group:
+        name: "{{ lab_group }}"
+        state: present
+      tags:
+        - setup_lab_group
+    - name: create lab user 
+      ansible.builtin.user:
+        name: "{{ lab_user }}"
+        password: "{{ lab_user_pwd | password_hash( 'sha512' ) }}"
+        shell: /bin/bash
+        group: "{{ lab_group }}"
+        groups: "vagrant"
+      tags: 
+        - setup_lab_user
+    - name: add lab user to sudoers
+      ansible.builtin.template:
+        src: "{{ item.src }}"
+        dest: "{{ item.dest }}"
+        force: yes
+      with_items:
+        - { src: 'lab_user_sudo.j2', dest: '/etc/sudoers.d/{{ lab_user }}' }
+      tags: 
+        - add_lab_user_sudoers
+  tags: setup_system_env

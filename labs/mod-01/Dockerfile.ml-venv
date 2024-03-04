@@ -1,0 +1,22 @@
+ARG ML_VERSION
+ARG PYTHON_VERSION
+
+FROM python:$PYTHON_VERSION
+
+ARG ML_VERSION
+ENV ML_VERSION=${ML_VERSION}
+ARG PYTHON_VERSION
+ENV PYTHON_VERSION=${PYTHON_VERSION}
+
+USER core
+
+COPY requirements.$ML_VERSION.txt /home/core/requirements.txt
+
+SHELL ["/bin/bash","-c"]
+
+RUN mkdir -p /home/core/ml-venv-$ML_VERSION; \
+    python -m venv --prompt ML-$ML_VERSION /home/core/ml-venv-$ML_VERSION; \
+    source home/core/ml-venv-$ML_VERSION/bin/activate; \
+    pip install -r /home/core/requirements.txt
+
+CMD ["/bin/bash", "-c"]

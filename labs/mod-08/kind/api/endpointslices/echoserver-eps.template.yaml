@@ -1,0 +1,34 @@
+apiVersion: discovery.k8s.io/v1
+kind: EndpointSlice
+metadata:
+  name: echo-app-eps-np-svc
+  namespace: mod-08-ns
+  labels:
+    rsc: echo-eps
+addressType: IPv4
+ports:
+  - name: echo-app-eps-tcp-8080
+    appProtocol: http
+    protocol: TCP
+    port: 8080
+endpoints:
+  # this is the echo-pod-1
+  - addresses:
+      - <echo-pod-1-ip-addr>
+    conditions:
+      ready: true
+    nodeName: <echo-pod-1-worker-node>
+    targetRef:
+          kind: Pod
+          namespace: mod-08-ns
+          name: echo-pod-1
+  # this is the echo-pod-2
+  - addresses:
+      - <echo-pod-2-ip-addr>
+    conditions:
+      ready: true
+    nodeName: <echo-pod-2-worker-node>
+    targetRef:
+          kind: Pod
+          namespace: mod-08-ns
+          name: echo-pod-2

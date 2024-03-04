@@ -1,0 +1,36 @@
+ARG version_a=9.3
+ARG wrkdir_a=/opt/web-apps
+
+FROM --platform=linux/amd64 rockylinux:$version_a AS rockylinux
+
+LABEL description="Rocky Linux $version_a"
+
+ARG wrkdir_a
+ENV wrkdir_e=${wrkdir_a}
+
+RUN dnf update -y; \
+    dnf install procps -y; \
+    dnf install iproute -y; \
+    dnf install nodejs -y
+
+RUN useradd core; \
+    mkdir -p $wrkdir_e; \
+    chown core:core $wrkdir_e
+
+USER core:core
+
+RUN mkdir -p $wrkdir_e/nodejs
+
+WORKDIR $wrkdir_e/nodejs
+
+ADD --chown=core:core node_project .
+
+RUN npm install
+
+STOPSIGNAL 9
+
+HEALTHCHECK CMD curl -f http://localhost:8080 || exit 1
+
+EXPOSE 8080/tcp
+
+CMD ["node","app.js"]

@@ -1,0 +1,22 @@
+FROM golang:1.21.6-alpine3.19 as compiler
+
+RUN mkdir -p /go/app
+
+WORKDIR /go/app
+
+COPY go_project/ .
+
+RUN CGO_ENABLED=0 go build -o /go/app/helloworld .
+
+FROM python:3.12.1-alpine3.19
+
+RUN pip install --upgrade pip; \
+    pip install supervisor
+
+COPY ./supervisord.conf /supervisord.conf
+
+COPY --from=compiler /go/app/helloworld /helloworld
+
+HEALTHCHECK CMD ["wget -q -S -O - http://localhost:8888"]
+
+CMD ["/usr/local/bin/supervisord", "--configuration", "/supervisord.conf"]

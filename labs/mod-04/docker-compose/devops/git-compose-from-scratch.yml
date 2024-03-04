@@ -1,0 +1,110 @@
+services:
+    git-dev-1:
+        build:
+            context: git-developer-1
+        container_name: "git-developer-1"
+        hostname: "git-dev-1"
+        domainname: "${GIT_DOMAIN}"
+        privileged: true
+        stop_signal: RTMIN+3
+        deploy:
+            resources:
+                limits:
+                    cpus: "2"
+                    memory: 1024M
+        restart: "no"
+        ports:
+            - "22201:22"
+            - "18001:8001" # Python Apps
+            - "18002:8002" # Micronaut Java Apps
+            - "18003:8003" # Spring Java Apps
+            - "18004:8004" # GoLang Apps
+            - "18005:8005" # NodeJS Apps
+        networks:
+            git-priv-net:
+                ipv4_address: "${GIT_DEV1_IP_ADDR}"
+                aliases:
+                    - "git-dev-1.priv.${GIT_DOMAIN}"
+        volumes:
+            - git-dev-1-dir:/git-dev-1-dir # local staging dir
+            - "../labs:/labs" # labs dir
+            - "../shared/git:/git-share"
+    git-dev-2:
+        build:
+            context: git-developer-2
+        depends_on:
+            - git-dev-1
+        container_name: "git-developer-2"
+        hostname: "git-dev-2"
+        domainname: "${GIT_DOMAIN}"
+        privileged: true
+        stop_signal: RTMIN+3
+        deploy:
+            resources:
+                limits:
+                    cpus: "2"
+                    memory: 1024M
+        restart: "no"
+        ports:
+            - "22202:22"
+            - "28001:8001" # Python Apps
+            - "28002:8002" # Micronaut Java Apps
+            - "28003:8003" # Spring Java Apps
+            - "28004:8004" # GoLang Apps
+            - "28005:8005" # NodeJS Apps
+        networks:
+            git-priv-net:
+                ipv4_address: "${GIT_DEV2_IP_ADDR}"
+                aliases:
+                    - "git-dev-2.priv.${GIT_DOMAIN}"
+        volumes:
+            - git-dev-2-dir:/git-dev-2-dir # local staging dir
+            - "../labs:/labs" # labs dir
+            - "../shared/git:/git-share"
+    git-srv:
+        build:
+            context: git-server
+        depends_on:
+            - git-dev-1
+            - git-dev-2
+        container_name: "git-server"
+        hostname: "git-srv"
+        domainname: "${GIT_DOMAIN}"
+        privileged: true
+        stop_signal: RTMIN+3
+        deploy:
+            resources:
+                limits:
+                    cpus: "2"
+                    memory: 2048M
+        restart: "no"
+        ports:
+            - "22200:22" # ssh
+            - "9418:9418" # Git Server (GIT)
+            - "44443:44443" # Git Web Server (HTTPS)
+            - "28080:80" # Git Web Server (HTTP)
+            - "8443:8443" # Step CA server (SSL)
+            - "22375:2375" # Docker Engine
+            - "23306:3306" # MySQL Server
+        networks:
+            git-priv-net:
+                ipv4_address: "${GIT_SRV_IP_ADDR}"
+                aliases:
+                    - "git-srv.priv.${GIT_DOMAIN}"
+        volumes:
+            - git-srv-dir:/git-srv-dir # local staging dir
+            - "../labs:/labs" # labs dir
+            - "../shared/git:/git-share"
+networks:
+    git-priv-net:
+        driver: bridge
+        attachable: true
+        name: git-priv-bridge
+        ipam:
+            driver: default
+            config:
+                - subnet: "${GIT_SUBNET}"
+volumes:
+    git-dev-1-dir:
+    git-dev-2-dir:
+    git-srv-dir:

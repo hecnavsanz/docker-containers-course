@@ -1,0 +1,9 @@
+---
+apiVersion: metallb.io/v1beta1
+kind: IPAddressPool
+metadata:
+  name: echo-ip-addr-pool
+  namespace: metallb-system
+spec:
+  addresses:
+  - <start-ip-addr>-<end-ip-addr>

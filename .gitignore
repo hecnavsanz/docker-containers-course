@@ -1,0 +1,12 @@
+# ignore util binaries
+minikube/bin/minikube.exe
+minikube/bin/minikube
+kubectl/bin/kubectl.exe 
+kubectl/bin/kubectl
+kind/bin/kind.exe
+kind/bin/kind
+helm/bin/helm.exe
+helm/bin/helm
+# ignore other files
+volume-storage/**
+!volume-storage/.gitkeep

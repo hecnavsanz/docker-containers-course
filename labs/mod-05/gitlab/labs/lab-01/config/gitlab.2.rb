@@ -1,0 +1,35 @@
+external_url "https://gitlab-srv.gitlabcourse.io:4443"
+nginx['redirect_http_to_https'] = true
+letsencrypt['enable'] = false
+nginx['ssl_certificate'] = "/gitlab-dir/ssl/gitlab-srv.crt"
+nginx['ssl_certificate_key'] = "/gitlab-dir/ssl/gitlab-srv.key"
+nginx['ssl_password_file'] = '/gitlab-dir/ssl/prov-passwd.txt'
+puma['per_worker_max_memory_mb'] = 1024 # 1GB
+# gitlab_rails['gitlab_default_can_create_group'] = true # deprecated since 15.5 removed in 16.0
+gitlab_rails['gitlab_username_changing_enabled'] = true
+gitlab_rails['gitlab_default_theme'] = 2
+gitlab_rails['log_directory'] = "/var/log/gitlab/gitlab-rails"
+gitlab_rails['initial_root_password'] = "S1mpl3-S3c4r3"
+gitlab_rails['initial_shared_runners_registration_token'] = "S1mpl3-S3c4r3"
+gitlab_rails['store_initial_root_password'] = true
+runtime_dir '/run'
+gitlab_rails['smtp_enable'] = true
+gitlab_rails['smtp_address'] = "gitlab-srv.gitlabcourse.io"
+gitlab_rails['smtp_port'] = 25
+gitlab_rails['smtp_authentication'] = false
+gitlab_rails['smtp_enable_starttls_auto'] = false
+gitlab_rails['smtp_tls'] = false
+gitlab_rails['smtp_ca_file'] = nil
+alertmanager['enable'] = false
+prometheus['enable'] = false
+node_exporter['enable'] = false
+grafana['enable'] = false
+gitlab_exporter['enable'] = false
+postgres_exporter['enable'] = false
+redis_exporter['enable'] = false
+mattermost['enable'] = false
+gitlab_kas['enable'] = false
+redis['rename_commands'] = {}
+gitlab_rails['gitlab_default_projects_features_issues'] = false
+gitlab_rails['gitlab_default_projects_features_wiki'] = false
+gitlab_rails['gitlab_default_projects_features_snippets'] = false

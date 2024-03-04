@@ -1,0 +1,30 @@
+---
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: nginx-echo-rs
+  namespace: mod-07-ns
+  labels:
+    rsc: nginx-echo-rs
+spec:
+  replicas: 2
+  selector:
+      matchExpressions:
+        - {key: web, operator: In, values: [nginx-in-rs]}
+        - {key: mw, operator: In, values: [echo-in-rs]}
+  template:
+    metadata:
+      name: nginx-echo-pod
+      labels:
+        web: nginx-in-rs
+        mw: echo-in-rs
+    spec:
+      containers:
+      - name: nginx-cntr
+        image: nginx:1.25.2
+        ports:
+        - containerPort: 80
+      - name: echo-cntr
+        image: k8s.gcr.io/echoserver:1.4 # us.gcr.io/k8s-artifacts-prod/echoserver:1.4 (k8s.gcr.io is deprecated)
+        ports:
+        - containerPort: 8080

@@ -1,0 +1,100 @@
+---
+- name: setup dns
+  become: true
+  become_user: root
+  block:
+    - name: install bind pkg (mgmt)
+      ansible.builtin.apt: 
+        name: 
+          - bind9
+          - bind9utils
+          - bind9-doc
+        state: present
+        update_cache: true
+      when: inventory_hostname in groups['srv']
+      tags: 
+        - inst_bind_pkg_mgmt
+    - name: replace bind to support ipv4 only (mgmt)
+      ansible.builtin.lineinfile:
+        path: /etc/default/named
+        regexp: '^OPTIONS'
+        line: OPTIONS="-u bind -4"
+        backup: yes
+      when: inventory_hostname in groups['srv']
+      tags: 
+        - replace_bind_supp_ipv4_mgmt
+    - name: named (bind) conf (mgmt)
+      ansible.builtin.template:
+        src: "{{ item.src }}"
+        dest: "{{ item.dest }}"
+        group: bind
+        mode: 0644
+      with_items:
+        - { src: 'named.conf.options.j2', dest: '/etc/bind/named.conf.options' }
+        - { src: 'named.conf.local.j2', dest: '/etc/bind/named.conf.local' }
+      when: inventory_hostname in groups['srv']
+      tags: 
+        - setup_named_conf_mgmt
+    - name: create bind zones directory (mgmt)
+      ansible.builtin.file:
+        path: "/var/cache/bind/zones"
+        state: directory
+        owner: bind
+        group: bind
+      when: inventory_hostname in groups['srv']
+      tags: 
+        - create_bind_zones_dir_mgmt
+    - name: named (bind) zone database (mgmt)
+      ansible.builtin.template:
+        src: db.local.j2
+        dest: /var/cache/bind/zones/db.{{ domain }}
+        group: bind
+        mode: 0644
+      when: inventory_hostname in groups['srv']
+      tags: 
+        - setup_named_zone_db_mgmt
+    - name: named (bind) reverse zone database  (mgmt)
+      ansible.builtin.template:
+        src: "{{ item.src }}"
+        dest: "{{ item.dest }}"
+        group: bind
+        mode: 0644
+      with_items:
+        - { src: 'db.pub.admin.j2', dest: '/var/cache/bind/zones/db.{{ hostvars[inventory_hostname]["ansible_enp0s8"]["ipv4"]["address"].split(".")[0:3] | join( "." ) }}' }
+        - { src: 'db.priv.admin.j2', dest: '/var/cache/bind/zones/db.{{ hostvars[inventory_hostname]["ansible_enp0s9"]["ipv4"]["address"].split(".")[0:3] | join( "." ) }}' }
+      when: inventory_hostname in groups['srv']
+      tags: 
+        - setup_named_rev_zone_db_mgmt
+    - name: install openresolv pkg (all)
+      ansible.builtin.apt: 
+        name: 
+          - openresolv
+        state: present
+        update_cache: true
+      tags: 
+        - inst_openresolv_pkg_all
+    - name: setup open resolv (all)
+      ansible.builtin.lineinfile:
+        path: /etc/resolvconf.conf
+        regexp: '^resolv_conf'
+        line: resolv_conf=NO
+      tags:
+        - setup_open_resolv_all
+    - name: setup dns resolv (all)
+      ansible.builtin.template:
+        src: resolv.conf.j2
+        dest: /etc/resolv.conf
+        backup: yes
+      tags:
+        - setup_dns_resolv_all
+    - name: restart bind (mgmt)
+      ansible.builtin.systemd: 
+        name: bind9
+        state: restarted
+        enabled: yes
+        daemon_reload: yes
+      when: inventory_hostname in groups['srv']
+      tags: 
+        - restart_bind_mgmt
+  tags: 
+    - setup_dns

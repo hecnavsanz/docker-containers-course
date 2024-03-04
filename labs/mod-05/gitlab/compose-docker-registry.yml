@@ -1,0 +1,46 @@
+services:
+  gitlab-dr:
+    image: registry:2
+    container_name: "gitlab-dr"
+    hostname: "gitlab-dr"
+    domainname: "${GITLAB_DOMAIN}"
+    privileged: true
+    stop_signal: RTMIN+3
+    deploy:
+      resources:
+        limits:
+          cpus: "1"
+          memory: 1024M
+    restart: "no"
+    ports:
+      - "55555:5000"
+    environment:
+      REGISTRY_HTTP_TLS_CERTIFICATE: /gitlab-share/dr/ssl/gitlab-dr.crt
+      REGISTRY_HTTP_TLS_KEY: /gitlab-share/dr/ssl/gitlab-dr.key
+      REGISTRY_AUTH: htpasswd
+      REGISTRY_AUTH_HTPASSWD_PATH: /gitlab-share/dr/ssl/htpasswd
+      REGISTRY_AUTH_HTPASSWD_REALM: Registry Realm
+    networks:
+      gitlab-net:
+        ipv4_address: "${GITLAB_DOCKER_REG_IP_ADDR}" # check it's not already been used by other cntrs in other bridges
+        aliases:
+          - "gitlab-dr.${GITLAB_DOMAIN}"
+    volumes:
+      - type: volume
+        source: gitlab-registry-dir
+        target: /var/lib/registry
+      - type: volume
+        source: gitlab-shared-dir
+        target: /gitlab-share
+networks:
+  gitlab-net:
+    driver: bridge
+    attachable: true
+    name: gitlab-bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: "${GITLAB_SUBNET}"
+volumes:
+  gitlab-registry-dir:
+  gitlab-shared-dir:

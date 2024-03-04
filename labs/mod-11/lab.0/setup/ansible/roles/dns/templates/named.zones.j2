@@ -1,0 +1,17 @@
+zone "{{ domain }}" IN {
+        type master;
+        file "named.domain";
+        allow-update { key rndc-key; };
+};
+
+zone "{{ gitlabsrv_pub_ip.split('.')[0:3][::-1] | join( '.' ) }}.in-addr.arpa" IN {
+        type master;
+        file "named.pub_reverse.in-addr.arpa";
+        allow-update { key rndc-key; };
+};
+
+zone "{{ gitlabsrv_priv_ip.split('.')[0:3][::-1] | join( '.' ) }}.in-addr.arpa" IN {
+        type master;
+        file "named.priv_reverse.in-addr.arpa";
+        allow-update { key rndc-key; };
+};

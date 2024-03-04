@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: sharks-pod
+  labels:
+    app: sharks
+spec:
+  nodeName: 1cp-2wn-worker
+  containers:
+    - name: sharks-cntr
+      image: hectornsanz/sharks:1.0
+      ports:
+        - name: web
+          containerPort: 8080
+          protocol: TCP
+      resources:
+        requests:
+          memory: "64Mi"
+          cpu: "0.5"
+        limits:
+          memory: "128Mi"
+          cpu: "1.0"

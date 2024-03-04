@@ -1,0 +1,7 @@
+# jenkins vars
+# jenkins network settings
+JENKINS_DOMAIN = corenetworks.io
+JENKINS_SUBNET = 172.119.0.0/16
+JENKINS_DEV_IP_ADDR = 172.119.0.101
+JENKINS_AGT_IP_ADDR = 172.119.0.102
+JENKINS_SRV_IP_ADDR = 172.119.0.100

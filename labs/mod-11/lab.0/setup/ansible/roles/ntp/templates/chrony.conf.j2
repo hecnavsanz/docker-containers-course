@@ -1,0 +1,13 @@
+# local chrony (ntp) conf
+server {{ gitlabsrv_priv_ip }} iburst
+driftfile /var/lib/chrony/chrony.drift
+makestep 10 3
+logdir /var/log/chrony
+{% if inventory_hostname in groups['srv']  %}
+local stratum 8
+allow {{ gitlabsrv_priv_ip.split('.')[0:3] | join( '.' ) }}.0/24
+cmdallow {{ gitlabsrv_priv_ip.split('.')[0:3] | join( '.' ) }}.0/24
+keyfile /etc/chrony/chrony.keys
+noclientlog
+{% endif %}
+

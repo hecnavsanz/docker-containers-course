@@ -1,0 +1,32 @@
+external_url "http://{{ gitlabsrv_hostname }}.{{ domain }}"
+
+gitlab_rails['gitlab_default_can_create_group'] = true
+gitlab_rails['gitlab_username_changing_enabled'] = true
+
+gitlab_rails['gitlab_default_theme'] = 2
+
+gitlab_rails['gitlab_default_projects_features_issues'] = true
+gitlab_rails['gitlab_default_projects_features_merge_requests'] = true
+gitlab_rails['gitlab_default_projects_features_wiki'] = true
+gitlab_rails['gitlab_default_projects_features_snippets'] = true
+gitlab_rails['gitlab_default_projects_features_builds'] = true
+gitlab_rails['gitlab_default_projects_features_container_registry'] = true
+
+gitlab_rails['log_directory'] = "/var/log/gitlab/gitlab-rails"
+
+gitlab_rails['initial_root_password'] = "{{ lab_user_pwd }}"
+gitlab_rails['initial_shared_runners_registration_token'] = "{{ lab_user_pwd }}"
+gitlab_rails['store_initial_root_password'] = true
+
+runtime_dir '/run'
+
+gitlab_rails['smtp_enable'] = false
+alertmanager['enable'] = false
+prometheus['enable'] = false
+node_exporter['enable'] = false
+grafana['enable'] = false
+gitlab_exporter['enable'] = false
+postgres_exporter['enable'] = false
+redis_exporter['enable'] = false
+mattermost['enable'] = false
+gitlab_kas['enable'] = false

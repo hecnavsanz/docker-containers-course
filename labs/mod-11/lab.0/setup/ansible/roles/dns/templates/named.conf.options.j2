@@ -1,0 +1,20 @@
+acl "trusted" {
+    {{ gitlabrnr_pub_ip }};
+    {{ gitlabrnr_priv_ip }};
+    {{ gitlabsrv_pub_ip }};
+    {{ gitlabsrv_priv_ip }};
+};
+options {
+        directory "/var/cache/bind";
+
+        recursion yes;
+        allow-recursion { trusted; };
+        listen-on { {{ gitlabsrv_pub_ip }}; {{ gitlabsrv_priv_ip }}; };
+        allow-transfer { none; };
+
+        forwarders {
+            8.8.8.8;
+        };
+        
+        dnssec-validation auto;
+};

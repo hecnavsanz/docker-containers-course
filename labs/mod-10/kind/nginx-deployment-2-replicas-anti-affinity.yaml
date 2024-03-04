@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-dp
+  namespace: default
+spec:
+  selector:
+    matchLabels:
+      app: nginx-app
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: nginx-app
+    spec:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+              labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                  - nginx-app
+              topologyKey: kubernetes.io/hostname      
+      containers:
+      - name: nginx-web
+        image: nginx
+        ports:
+          - containerPort: 80

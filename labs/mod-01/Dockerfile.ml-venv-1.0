@@ -1,0 +1,14 @@
+FROM python:3.10
+
+USER core
+
+COPY requirements.txt /home/core/requirements.txt
+
+SHELL ["/bin/bash","-c"]
+
+RUN mkdir -p /home/core/ml-venv-1.0; \
+    python -m venv --prompt ML-1.0 /home/core/ml-venv-1.0; \
+    source home/core/ml-venv-1.0/bin/activate; \
+    pip install -r /home/core/requirements.txt
+
+CMD ["/bin/bash", "-c"]

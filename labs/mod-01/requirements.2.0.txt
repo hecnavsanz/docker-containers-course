@@ -1,0 +1,6 @@
+# ml packages
+scipy
+numpy
+matplotlib
+pandas
+scikit-learn

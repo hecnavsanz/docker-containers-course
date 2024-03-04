@@ -1,0 +1,25 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: core-ns
+  name: nodejs-app-eks
+  labels:
+    app: nodejs-app-eks
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: nodejs-app-eks
+  template:
+    metadata:
+      labels:
+        app: nodejs-app-eks
+    spec:
+      containers:
+      - name: nodejs-app-eks
+        image:  IP.dkr.ecr.tutu-zone.amazonaws.com/core-repo:nodejs-app # use repositoryUri and imageTab from ecr.ps1 script
+        ports:
+        - name: nodejs-app-port
+          containerPort: 8080
+        imagePullPolicy: IfNotPresent

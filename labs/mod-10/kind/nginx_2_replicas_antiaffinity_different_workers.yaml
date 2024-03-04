@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-antiaffin-dp
+  namespace: default
+spec:
+  selector:
+    matchLabels:
+      app: nginx-antiaffin-app
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: nginx-antiaffin-app
+    spec:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution: # preferredDuringSchedulingIgnoredDuringExecution: more flexible bcz it creates the pod even not complaining.
+          - labelSelector:
+              matchExpressions:
+              - key: app
+                operator: In
+                values:
+                - nginx-antiaffin-app
+            topologyKey: "kubernetes.io/hostname" # required for antiaffinity
+      containers:
+      - name: nginx-antiaffin
+        image: nginx:1.14.2

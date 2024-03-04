@@ -1,0 +1,121 @@
+services:
+    jenkins-dev:
+        build:
+            context: jenkins-developer
+        container_name: "jenkins-developer"
+        hostname: "jenkins-dev"
+        domainname: "${JENKINS_DOMAIN}"
+        privileged: true
+        stop_signal: RTMIN+3
+        deploy:
+            resources:
+                limits:
+                    cpus: "2"
+                    memory: 1024M
+        restart: "no"
+        ports:
+            - "22201:22"   # SSH
+            - "18001:8001" # Python Apps
+            - "18002:8002" # Micronaut Java Apps
+            - "18003:8003" # Spring Java Apps
+            - "18004:8004" # GoLang Apps
+            - "18005:8005" # NodeJS Apps
+        networks:
+            jenkins-priv-net:
+                ipv4_address: "${JENKINS_DEV_IP_ADDR}"
+                aliases:
+                    - "jenkins-dev.priv.${JENKINS_DOMAIN}"
+                    - "git-dev.priv.${JENKINS_DOMAIN}"
+        volumes:
+            - jenkins-dev-dir:/jenkins-dev-dir
+            - "../labs:/labs"
+            - "../shared/jenkins:/jenkins-share"
+    jenkins-agt:
+        build:
+            context: jenkins-agent
+        depends_on:
+            - jenkins-dev
+        container_name: "jenkins-agent"
+        hostname: "jenkins-agt"
+        domainname: "${JENKINS_DOMAIN}"
+        privileged: true
+        stop_signal: RTMIN+3
+        deploy:
+            resources:
+                limits:
+                    cpus: "2"
+                    memory: 2048M
+        restart: "no"
+        ports:
+            - "22202:22" # SSH
+            - "28001:8001" # Python Apps
+            - "28002:8002" # Micronaut Java Apps
+            - "28003:8003" # Spring Java Apps
+            - "28004:8004" # GoLang Apps
+            - "28005:8005" # NodeJS Apps
+            - "22375:2375" # Docker Engine
+            - "23306:3306" # MySQL Server
+        networks:
+            jenkins-priv-net:
+                ipv4_address: "${JENKINS_AGT_IP_ADDR}"
+                aliases:
+                    - "jenkins-agt.priv.${JENKINS_DOMAIN}"
+                    - "git-agt.priv.${JENKINS_DOMAIN}"
+        volumes:
+            - jenkins-agt-in-dir:/jenkins-agt-in-dir
+            - jenkins-agt-out-dir:/jenkins-agt-out-dir
+            - "../labs:/labs"
+            - "../shared/jenkins:/jenkins-share"
+    jenkins-srv:
+        build:
+            context: jenkins-server
+        depends_on:
+            - jenkins-agt
+        container_name: "jenkins-server"
+        hostname: "jenkins-srv"
+        domainname: "${JENKINS_DOMAIN}"
+        privileged: true
+        stop_signal: RTMIN+3
+        deploy:
+            resources:
+                limits:
+                    cpus: "2"
+                    memory: 3072M
+        restart: "no"
+        ports:
+            - "22200:22" # SSH
+            - "8080:8080" # Jenkins Web UI (HTTP)
+            - "4443:4443" # Jenkins Web UI (HTTPS)
+            - "8888:8888" # Jenkins HTTP2
+            - "8443:8443" # Step CA server (SSL)
+            - "50000:50000" # Jenkins Controller->TCP Agent (inbound-https pull)
+            - "8012:8012" # JMX remote (RMI)
+            - "8013:8013" # JMX remote
+            - "44443:44443" # Git Web Server (HTTPS)
+            - "28080:80" # Git Web Server (HTTP)
+        networks:
+            jenkins-priv-net:
+                ipv4_address: "${JENKINS_SRV_IP_ADDR}" # check it's not already been used by other bridges
+                aliases:
+                    - "jenkins-srv.priv.${JENKINS_DOMAIN}"
+                    - "git-srv.priv.${JENKINS_DOMAIN}"
+        volumes:
+            - jenkins-srv-dir:/jenkins-srv-dir
+            - "../labs:/labs"
+            - "../shared/jenkins:/jenkins-share"
+            - git-srv-dir:/git-srv-dir
+networks:
+    jenkins-priv-net:
+        driver: bridge
+        attachable: true
+        name: jenkins-priv-bridge
+        ipam:
+            driver: default
+            config:
+                - subnet: "${JENKINS_SUBNET}"
+volumes:
+    jenkins-srv-dir:
+    jenkins-agt-in-dir:
+    jenkins-agt-out-dir:
+    jenkins-dev-dir:
+    git-srv-dir:

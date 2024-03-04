@@ -1,0 +1,2 @@
+deb [signed-by=/etc/apt/trusted.gpg] https://deb.nodesource.com/node_18.x focal main
+deb-src [signed-by=/etc/apt/trusted.gpg] https://deb.nodesource.com/node_18.x focal main

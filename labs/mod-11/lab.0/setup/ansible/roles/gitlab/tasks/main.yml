@@ -1,0 +1,105 @@
+---
+- name: setup gitlab
+  become: true
+  become_user: root
+  block:
+    - name: install gitlab required pkgs
+      ansible.builtin.apt: 
+        name: 
+          - debian-archive-keyring
+          - gnupg
+          - apt-transport-https
+        state: present
+        update_cache: true
+      tags: 
+        - inst_gitlab_req_pkgs
+    - name: setup gitlab server and runner repository gpg
+      ansible.builtin.shell: |
+        wget -O /tmp/gpgkey https://packages.gitlab.com/gitlab/gitlab-ce/gpgkey
+        export APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=DontWarn
+        apt-key add /tmp/gpgkey
+      tags:
+        - setup_gitlab_srv_rnr_repo_gpg
+    - name: add gitlab server repo file
+      ansible.builtin.copy:
+        src: gitlab-server.list
+        dest: /etc/apt/sources.list.d/gitlab-server.list
+      when: inventory_hostname in groups['srv']
+      tags:
+        - add_gitlab_srv_repo
+    - name: setup gitlab server configuration directory
+      ansible.builtin.file:
+        path: /etc/gitlab
+        state: directory
+      when: inventory_hostname in groups['srv']
+      tags:
+        - setup_gitlab_srv_conf_dir
+    - name: gitlab server configuration
+      ansible.builtin.template:
+        src: gitlab.rb.j2
+        dest: /etc/gitlab/gitlab.rb
+      when: inventory_hostname in groups['srv']
+      tags: 
+        - setup_gitlab_srv_conf
+    - name: install gitlab server pkg
+      ansible.builtin.apt: 
+        name: 
+          - gitlab-ce
+        state: present
+        update_cache: true
+      when: inventory_hostname in groups['srv']
+      tags: 
+        - inst_gitlab_srv_pkg
+    - name: add gitlab runner pin
+      ansible.builtin.copy:
+        src: pin-gitlab-runner.pref
+        dest: /etc/apt/preferences.d/pin-gitlab-runner.pref
+      when: inventory_hostname in groups['rnr']
+      tags:
+        - add_gitlab_runner_pin
+    - name: add gitlab runner repo file
+      ansible.builtin.copy:
+        src: gitlab-runner.list
+        dest: /etc/apt/sources.list.d/gitlab-runner.list
+      when: inventory_hostname in groups['rnr']
+      tags:
+        - add_gitlab_rnr_repo
+    - name: install gitlab runner pkg
+      ansible.builtin.apt: 
+        name: 
+          - gitlab-runner
+        state: present
+        update_cache: true
+      when: inventory_hostname in groups['rnr']
+      tags: 
+        - inst_gitlab_rnr_pkg  
+    - name: add gitlab-runner user to sudoers
+      ansible.builtin.template:
+        src: "{{ item.src }}"
+        dest: "{{ item.dest }}"
+        force: yes
+      with_items:
+        - { src: 'gitlab_runner_user_sudo.j2', dest: '/etc/sudoers.d/gitlab-runner' }
+      when: inventory_hostname in groups['rnr']
+      tags: 
+        - add_gitlab_rnr_user_sudoers
+    - name: setup gitlab server admin and user accounts, and project
+      ansible.builtin.shell: |
+        gitlab-rails console <<EOF
+        # Modify admin email
+        user = User.find_by(name: 'Administrator')
+        user.email = 'admin@core.io'
+        user.skip_reconfirmation!
+        user.save!
+        # create core user
+        user = User.new(username: 'core', email: 'core@core.io', name: 'core', password: '{{ lab_user_pwd }}', password_confirmation: '{{ lab_user_pwd }}', admin: false)
+        user.skip_confirmation!
+        user.save!
+        # create core project
+        # project = Project.new(creator_id: user.id, name: 'core', path: 'core', auto_devops_enabled: true, namespace_id: user.namespace_id)
+        # project.save!
+        EOF
+      when: inventory_hostname in groups['srv']
+      tags:
+        - setup_gitlab_srv_adm_usr_accnts_prj
+  tags: setup_gitlab

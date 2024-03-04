@@ -1,0 +1,28 @@
+---
+- name: setup ntp
+  become: true
+  become_user: root
+  block:
+    - name: install chrony pkg
+      ansible.builtin.apt: 
+        name: 
+          - chrony
+        state: present
+        update_cache: true
+      tags: 
+        - inst_chrony_pkg
+    - name: chrony (ntp) conf
+      ansible.builtin.template:
+        src: "chrony.conf.j2"
+        dest: "/etc/chrony/chrony.conf"
+        force: yes
+      tags: 
+        - setup_chronyd
+    - name: restart chronyd
+      ansible.builtin.systemd: 
+        name: chronyd
+        state: restarted
+        enabled: yes
+      tags: 
+        - restart_chronyd
+  tags: setup_ntp

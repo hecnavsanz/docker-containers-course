@@ -1,0 +1,24 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: echo-dp
+  namespace: mod-07-ns
+  labels:
+    rsc: echo-dp
+spec:
+  selector:
+    matchLabels:
+      app: echo-dp
+  replicas: 3
+  template:
+    metadata:
+      name: echo-pod
+      labels:
+        app: echo-dp
+    spec:
+      containers:
+      - name: echo-cntr
+        image: us.gcr.io/k8s-artifacts-prod/echoserver:1.10
+        ports:
+        - containerPort: 8080

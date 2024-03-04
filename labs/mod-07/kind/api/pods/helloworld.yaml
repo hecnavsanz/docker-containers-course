@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: hw-pod
+  namespace: default
+  labels:
+    author: core
+spec:
+  containers:
+  - name: hw-cntr
+    image: docker.io/hectornsanz/helloworld:1.0
+    ports:
+    - containerPort: 8888

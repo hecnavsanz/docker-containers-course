@@ -1,0 +1,28 @@
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: echo-pod-1
+  namespace: mod-08-ns
+  labels:
+    rsc: echo-app
+spec:
+  containers:
+    - name: echo-cntr
+      image: us.gcr.io/k8s-artifacts-prod/echoserver:1.10
+      ports:
+      - containerPort: 8080
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: echo-pod-2
+  namespace: mod-08-ns
+  labels:
+    rsc: echo-app
+spec:
+  containers:
+    - name: echo-cntr
+      image: us.gcr.io/k8s-artifacts-prod/echoserver:1.10
+      ports:
+      - containerPort: 8080

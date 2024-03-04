@@ -1,0 +1,19 @@
+# var yaml file used by ansible
+
+# network domain
+domain: "core.io" 
+
+# gitlabsrv network settings
+gitlabsrv_hostname: "gitlabsrv"
+gitlabsrv_pub_ip: "192.168.84.11"
+gitlabsrv_priv_ip: "10.0.0.11" # custom 10.0.0.0 (intnet)
+
+# gitlabrnr network settings
+gitlabrnr_hostname: "gitlabrnr"
+gitlabrnr_pub_ip: "192.168.84.12"
+gitlabrnr_priv_ip: "10.0.0.12" # custom 10.0.0.0 (intnet)
+
+# os user and group settings
+lab_user: "core"
+lab_user_pwd: "core.2FORMACION"
+lab_group: "core"

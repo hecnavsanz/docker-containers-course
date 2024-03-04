@@ -1,0 +1,16 @@
+# catchup-gitlab-01-1.sh: gitlab installation and configuration
+# steps: run in your laptop or VM:
+
+# sh keys/remove-known-hosts.sh 
+
+# ssh -i keys/gitlabcourse -l adm -p 33333 -o StrictHostKeyChecking=no gitlab-srv.gitlabcourse.io
+# . /labs/lab-01/scripts/catchup-gitlab-01-1.sh | tee -a ./catchup-gitlab-01-1.log
+
+# ssh -i keys/gitlabcourse -l dev1 -p 33331 -o StrictHostKeyChecking=no gitlab-srv.gitlabcourse.io
+# . /labs/lab-01/scripts/catchup-gitlab-01-2.sh | tee -a ./catchup-gitlab-01-2.log
+
+# ssh -i keys/gitlabcourse -l adm -p 33333 -o StrictHostKeyChecking=no gitlab-srv.gitlabcourse.io
+# . /labs/lab-01/scripts/catchup-gitlab-01-3.sh | tee -a ./catchup-gitlab-01-3.log
+
+# ssh -i keys/gitlabcourse -l dev2 -p 33332 -o StrictHostKeyChecking=no gitlab-srv.gitlabcourse.io
+# . /labs/lab-01/scripts/catchup-gitlab-01-4.sh | tee -a ./catchup-gitlab-01-4.log

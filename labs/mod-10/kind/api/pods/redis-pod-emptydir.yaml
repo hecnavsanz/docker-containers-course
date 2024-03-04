@@ -1,0 +1,26 @@
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: redis-pod
+  namespace: default
+spec:
+  containers:
+  - name: redis-cntr
+    image: redis
+    volumeMounts:
+    - name: redis-storage
+      mountPath: /data/redis
+    resources:
+      requests:
+        memory: "500Mi"
+        cpu: "0.5"
+        ephemeral-storage: "2Gi"
+      limits:
+        memory: "1000Mi"
+        cpu: "1"
+        ephemeral-storage: "4Gi"
+  volumes:
+  - name: redis-storage
+    emptyDir:
+      sizeLimit: 500Mi

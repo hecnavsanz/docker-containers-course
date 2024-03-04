@@ -1,0 +1,3 @@
+# file sor dirs to not be included by ADD or COPY commands
+node_project/node_modules
+node_project/package-lock.json

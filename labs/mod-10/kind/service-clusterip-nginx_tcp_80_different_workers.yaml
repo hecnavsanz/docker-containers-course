@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-web
+  namespace: default
+  labels:
+    app: nginx-app
+spec:
+  type: ClusterIP
+  selector:
+    app: nginx-app
+  ports:
+    - name: nginx-80-tcp
+      protocol: TCP
+      port: 80
+      targetPort: 80

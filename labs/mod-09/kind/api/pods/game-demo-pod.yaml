@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: game-demo-cm-pod
+  namespace: mod-08-ns
+spec:
+  containers:
+    - name: game-demo-cm-cntr
+      image: ubuntu:22.04
+      command: ['sh', '-c', 'echo "The app is running!" && tail -f /dev/null']
+      volumeMounts:
+        - name: game-demo-prop-vol
+          mountPath: /etc/properties
+      resources:
+        requests:
+          memory: "64Mi"
+          cpu: "0.5"
+        limits:
+          memory: "128Mi"
+          cpu: "1.0"
+  volumes:
+    - name: game-demo-prop-vol
+      configMap:
+        name: game-demo-cm
+        items:
+          - key: game.properties
+            path: game_properties

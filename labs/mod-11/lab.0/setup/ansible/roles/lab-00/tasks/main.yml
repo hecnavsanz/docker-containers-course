@@ -1,0 +1,20 @@
+---
+- name: configure lab 00
+  become: true
+  become_user: root
+  block:
+    - name: setup gitlab runner (shell)
+      ansible.builtin.lineinfile:
+        path: /etc/mysql/mariadb.conf.d/50-server.cnf
+        insertafter: '\[mariadb\]'
+        line: innodb_buffer_pool_dump_at_shutdown = OFF
+      tags:
+        - setup_ibbp_off
+    - name: restart mariadb service
+      ansible.builtin.systemd: 
+        name: mariadb
+        state: restarted
+      tags:
+        - restart_mariadb_svc
+  tags:
+    - configure_lab_00

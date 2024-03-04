@@ -1,0 +1,98 @@
+services:
+
+  gitlab-registry:
+    container_name: gitlab-registry
+    domainname: core.io
+    image: registry:2
+    restart: always
+    environment:
+      REGISTRY_HTTP_TLS_CERTIFICATE: /certs/core.io.crt
+      REGISTRY_HTTP_TLS_KEY: /certs/core.io.key
+      REGISTRY_AUTH: htpasswd
+      REGISTRY_AUTH_HTPASSWD_PATH: /auth/htpasswd
+      REGISTRY_AUTH_HTPASSWD_REALM: Registry Realm
+      REGISTRY_STORAGE_DELETE_ENABLED: true
+    volumes:
+      - 'gitlab-registry-storage:/var/lib/registry'
+      - './cert/registry:/certs'
+      - './auth/registry:/auth'
+    networks:
+      gitlab-net:
+        ipv4_address: "${GITLAB_REGISTRY_IP_ADDR}"
+        aliases:
+          - "gitlab-registry.core.io"
+    ports:
+      - "5000:5000"
+  
+  gitlab:
+    container_name: gitlab
+    domainname: core.io
+    image: gitlab/gitlab-ce
+    restart: always
+    environment:
+      GITLAB_OMNIBUS_CONFIG: "from_file('/omnibus_config.rb')"
+    configs:
+      - source: gitlab_conf
+        target: /omnibus_config.rb
+    secrets:
+      - gitlab_root_pwd
+    volumes:
+      - 'gitlab-config:/etc/gitlab'
+      - 'gitlab-logs:/var/log/gitlab'
+      - 'gitlab-data:/var/opt/gitlab'
+    # shm_size: 1024m
+    networks:
+      gitlab-net:
+        ipv4_address: "${GITLAB_IP_ADDR}"
+        aliases:
+          - "gitlab.core.io"
+    ports:
+      - "8929:8929"
+      - "2224:22"
+  
+  # gitlab-shared-runner:
+  #   container_name: gitlab-shared-runner
+  #   domainname: core.io
+  #   image: gitlab/gitlab-runner
+  #   restart: always
+  #   configs:
+  #     - source: gitlab_shared_runner_conf
+  #       target: /etc/gitlab-runner/config.toml
+  #   volumes:
+  #     - 'gitlab-shared-runner-config:/etc/gitlab-runner'
+  #   # shm_size: 512m
+  #   networks:
+  #     gitlab-net:
+  #       ipv4_address: "${GITLAB_SHARED_RUNNER_IP_ADDR}"
+  #       aliases:
+  #         - "gitlab-shared-runner.core.io"
+  #   ports:
+  #     - "8929:8929"
+  #     - "2224:22"
+
+volumes:
+  gitlab-registry-storage:
+  gitlab-config:
+  gitlab-logs:
+  gitlab-data:
+  gitlab-shared-runner-config:
+
+networks:
+  gitlab-net:
+    driver: bridge
+    attachable: true
+    name: gitlab-bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: "${GITLAB_SUBNET}"
+
+configs:
+  gitlab_conf:
+    file: ./config/gitlab.rb
+  gitlab_shared_runner_conf:
+    file: ./config/shared-config.toml
+
+secrets:
+  gitlab_root_pwd:
+    file: ./config/root_pwd.dat

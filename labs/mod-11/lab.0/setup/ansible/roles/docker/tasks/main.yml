@@ -1,0 +1,32 @@
+---
+- name: setup docker
+  become: true
+  become_user: root
+  block:
+    - name: setup docker runner repository gpg
+      ansible.builtin.shell: |
+        wget -O /tmp/gpg https://download.docker.com/linux/ubuntu/gpg
+        export APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=DontWarn
+        apt-key add /tmp/gpg
+      tags:
+        - setup_docker_rnr_repo_gpg
+    - name: tranfer docker repository file
+      ansible.builtin.copy:
+        src: docker.list
+        dest: /etc/apt/sources.list.d/docker.list
+        directory_mode: yes
+      tags:
+        - transfer_docker_rnr_repo_file
+    - name: install docker packages
+      ansible.builtin.apt: 
+        name: 
+          - docker-ce
+          - docker-ce-cli
+          - containerd.io
+          - docker-compose-plugin
+        state: present
+        update_cache: true
+      tags: 
+        - inst_docker_rnr_pkgs  
+  when: inventory_hostname in groups['rnr']
+  tags: setup_docker

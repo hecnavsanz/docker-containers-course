@@ -1,0 +1,10 @@
+FROM ubuntu:22.04
+
+RUN apt-get update -y; \
+    apt install python3.10-full python3.10-venv -y; \
+    update-alternatives --install /usr/bin/python python /usr/bin/python3.10 1
+
+RUN groupadd core; \
+    useradd --create-home -s /usr/sbin/nologin -g core core
+
+CMD ["/bin/bash", "-c"]

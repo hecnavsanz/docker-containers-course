@@ -1,0 +1,29 @@
+---
+- name: setup nodejs
+  become: true
+  become_user: root
+  block:
+    - name: setup nodejs repository gpg
+      ansible.builtin.shell: |
+        wget -O /tmp/nodesource.gpg.key https://deb.nodesource.com/gpgkey/nodesource.gpg.key
+        export APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=DontWarn
+        apt-key add /tmp/nodesource.gpg.key
+      tags:
+        - setup_nodejs_repo_gpg
+    - name: tranfer nodejsrepository file
+      ansible.builtin.copy:
+        src: nodesource.list
+        dest: /etc/apt/sources.list.d/nodesource.list
+        directory_mode: yes
+      tags:
+        - transfer_nodejs_repo_file
+    - name: install nodejs packages
+      ansible.builtin.apt: 
+        name: 
+          - nodejs
+        state: present
+        update_cache: true
+      tags: 
+        - inst_nodejs_pkgs  
+  when: inventory_hostname in groups['rnr']
+  tags: setup_nodejs

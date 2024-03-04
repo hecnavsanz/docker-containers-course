@@ -1,0 +1,125 @@
+# Vagrant file for Oracle Linux
+# Licensed under the Universal Permissive License v 1.0 as shown at https://oss.oracle.com/licenses/upl/
+
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+if Vagrant::Util::Platform.windows? then
+    vbox_adapter = "VirtualBox Host-Only Ethernet Adapter"
+else
+    vbox_adapter = "vboxnet0"
+end
+
+# configuration options
+Vagrant.configure( "2" ) do |config|	
+
+    # gitlabrnr Server
+    config.vm.define "gitlabrnr" do |gitlabrnr|
+
+        # box configuration
+        gitlabrnr.vm.box = "ubuntu/focal64"
+        # vm settings
+        gitlabrnr.vm.provider "virtualbox" do |vbox|
+            vbox.gui = false
+            vbox.name = "gitlabrnr"
+            vbox.customize ['modifyvm', :id, '--memory', "2048"]
+            vbox.customize ['modifyvm', :id, '--cpus', "2"]
+            vbox.customize ["modifyvm", :id, "--groups", "/" + "core.io/gitlab"]
+            vbox.customize ["modifyvm", :id, "--graphicscontroller", "vmsvga"]
+            vbox.customize ["modifyvm", :id, "--vram", "128"]
+            vbox.check_guest_additions = true
+        end
+    
+        # networking 
+        # hostonly adapter (laptop to vm)
+        gitlabrnr.vm.network "private_network",
+            :ip => "192.168.84.12",
+            :netmask => "255.255.255.0",
+            :hostname => true,
+            :name => vbox_adapter
+        gitlabrnr.vm.hostname = "gitlabrnr" + "." + "core.io"
+        # internal network adapter
+        gitlabrnr.vm.network "private_network",
+            :ip => "10.0.0.12",
+            :netmask => "255.255.255.0",
+            :virtualbox__intnet => "core_intnet"
+    
+        # virtual disk  
+        gitlabrnr.vm.disk :disk, size: "40GB", name: "datadisk"
+
+        # sync'ed folder permissions for stage
+        gitlabrnr.vm.synced_folder "./stage", "/stage",
+            owner: "vagrant",
+            group: "vagrant",
+            mount_options: ["dmode=777","fmode=777"]
+
+        # sync'ed folder permissions for stage
+        gitlabrnr.vm.synced_folder "./labs", "/labs",
+            owner: "vagrant",
+            group: "vagrant",
+            mount_options: ["dmode=775","fmode=775"]    
+    end
+
+    # gitlabsrv server
+    config.vm.define "gitlabsrv" do |gitlabsrv|
+
+        # box configuration
+        gitlabsrv.vm.box = "ubuntu/focal64"
+        # vm settings
+        gitlabsrv.vm.provider "virtualbox" do |vbox|
+            vbox.gui = false
+            vbox.name = "gitlabsrv"
+            vbox.customize ['modifyvm', :id, '--memory', "4096"]
+            vbox.customize ['modifyvm', :id, '--cpus', "2"]
+            vbox.customize ["modifyvm", :id, "--groups", "/" + "core.io/gitlab"]
+            vbox.customize ["modifyvm", :id, "--graphicscontroller", "vmsvga"]
+            vbox.customize ["modifyvm", :id, "--vram", "128"]
+            vbox.check_guest_additions = true
+        end
+    
+        # networking 
+        # hostonly adapter (laptop to vm)
+        gitlabsrv.vm.network "private_network",
+            :ip => "192.168.84.11",
+            :netmask => "255.255.255.0",
+            :hostname => true,
+            :name => vbox_adapter
+        gitlabsrv.vm.hostname = "gitlabsrv" + "." + "core.io"
+        # internal network adapter
+        gitlabsrv.vm.network "private_network",
+            :ip => "10.0.0.11",
+            :netmask => "255.255.255.0",
+            :virtualbox__intnet => "core_intnet"
+        
+        # virtual disk  
+        gitlabsrv.vm.disk :disk, size: "40GB", name: "datadisk"
+    
+        # sync'ed folder permissions for Ansible
+        gitlabsrv.vm.synced_folder ".", "/vagrant",
+            owner: "vagrant",
+            group: "vagrant",
+            mount_options: ["umask=077"]	
+
+        # sync'ed folder permissions for stage
+        gitlabsrv.vm.synced_folder "./stage", "/stage",
+            owner: "vagrant",
+            group: "vagrant",
+            mount_options: ["dmode=777","fmode=777"]
+
+        # sync'ed folder permissions for stage
+        gitlabsrv.vm.synced_folder "./labs", "/labs",
+            owner: "vagrant",
+            group: "vagrant",
+            mount_options: ["dmode=775","fmode=775"]
+        
+        # ansible playbook to deploy lab environment
+        gitlabsrv.vm.provision "ansible_local",
+            :install => true,
+            :install_mode => 'default',
+            :playbook => "main.yml",
+            :provisioning_path => '/vagrant/ansible',
+            :inventory_path => 'inventory/hosts',
+            :verbose => true,
+            :limit => "all"
+    end
+end

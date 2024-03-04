@@ -1,0 +1,7 @@
+# git vars
+# git network settings
+GIT_DOMAIN = corenetworks.io
+GIT_SUBNET = 172.118.0.0/16
+GIT_DEV1_IP_ADDR = 172.118.0.201
+GIT_DEV2_IP_ADDR = 172.118.0.202
+GIT_SRV_IP_ADDR = 172.118.0.200

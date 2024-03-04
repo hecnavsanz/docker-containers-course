@@ -1,0 +1,157 @@
+services:
+  gitlab-clnt1:
+    build: 
+      context: gitlab-clnt1
+    container_name: "gitlab-clnt1"
+    hostname: "gitlab-clnt1"
+    domainname: "${GITLAB_DOMAIN}"
+    privileged: true
+    stop_signal: RTMIN+3
+    deploy:
+      resources:
+        limits:
+          cpus: "1"
+          memory: 1024M
+    restart: "no"
+    ports:
+      - "33331:22"
+      - "9991:9999"
+    networks:
+      gitlab-net:
+        ipv4_address: "${GITLAB_CLNT1_IP_ADDR}" # check it's not already been used by other cntrs in other bridges
+        aliases:
+          - "gitlab-clnt1.${GITLAB_DOMAIN}"
+    volumes:
+      - gitlab-clnt1-dir:/gitlab-dir
+      - "./labs:/labs"
+      - gitlab-shared-dir:/gitlab-share
+  gitlab-clnt2:
+    build: 
+      context: gitlab-clnt2
+    depends_on:
+      - gitlab-clnt1
+    container_name: "gitlab-clnt2"
+    hostname: "gitlab-clnt2"
+    domainname: "${GITLAB_DOMAIN}"
+    privileged: true
+    stop_signal: RTMIN+3
+    deploy:
+      resources:
+        limits:
+          cpus: "1"
+          memory: 1024M
+    restart: "no"
+    ports:
+      - "33332:22"
+      - "9992:9999"
+    networks:
+      gitlab-net:
+        ipv4_address: "${GITLAB_CLNT2_IP_ADDR}" # check it's not already been used by other cntrs in other bridges
+        aliases:
+          - "gitlab-clnt2.${GITLAB_DOMAIN}"
+    volumes:
+      - gitlab-clnt2-dir:/gitlab-dir
+      - "./labs:/labs"
+      - gitlab-shared-dir:/gitlab-share
+  gitlab-srv:
+    build: 
+      context: gitlab-srv
+    depends_on:
+      - gitlab-clnt1
+      - gitlab-clnt2
+    container_name: "gitlab-srv"
+    hostname: "gitlab-srv"
+    domainname: "${GITLAB_DOMAIN}"
+    privileged: true
+    stop_signal: RTMIN+3
+    restart: "no"
+    ports:
+      - "33333:22" # ssh
+      - "10080:80" # GitLab Web (HTTP)
+      - "4443:4443" # GitLab Web (SSL)
+      - "10443:443" # Step CA Server (SSL)
+    networks:
+      gitlab-net:
+        ipv4_address: "${GITLAB_SRV_IP_ADDR}" # check it's not already been used by other bridges
+        aliases:
+          - "gitlab-srv.${GITLAB_DOMAIN}"
+          - "web-srv.${GITLAB_DOMAIN}"
+    volumes:
+      - gitlab-srv-dir:/gitlab-dir
+      - "./labs:/labs"
+      - gitlab-shared-dir:/gitlab-share
+  gitlab-runr1:
+    build: 
+      context: gitlab-runr1
+    depends_on:
+      - gitlab-clnt1
+      - gitlab-clnt2
+      - gitlab-srv
+    container_name: "gitlab-runr1"
+    hostname: "gitlab-runr1"
+    domainname: "${GITLAB_DOMAIN}"
+    privileged: true
+    stop_signal: RTMIN+3
+    deploy:
+      resources:
+        limits:
+          cpus: "1"
+          memory: 1024M
+    restart: "no"
+    ports:
+      - "33334:22" # ssh
+    networks:
+      gitlab-net:
+        ipv4_address: "${GITLAB_RUNR1_IP_ADDR}" # check it's not already been used by other bridges
+        aliases:
+          - "gitlab-runr1.${GITLAB_DOMAIN}"
+    volumes:
+      - gitlab-runr1-dir:/gitlab-dir
+      - "./labs:/labs"
+      - gitlab-shared-dir:/gitlab-share
+  gitlab-runr2:
+    build: 
+      context: gitlab-runr2
+    depends_on:
+      - gitlab-clnt1
+      - gitlab-clnt2
+      - gitlab-srv
+      - gitlab-runr1
+    container_name: "gitlab-runr2"
+    hostname: "gitlab-runr2"
+    domainname: "${GITLAB_DOMAIN}"
+    privileged: true
+    stop_signal: RTMIN+3
+    deploy:
+      resources:
+        limits:
+          cpus: "1"
+          memory: 1024M
+    restart: "no"
+    ports:
+      - "33335:22" # ssh
+    networks:
+      gitlab-net:
+        ipv4_address: "${GITLAB_RUNR2_IP_ADDR}" # check it's not already been used by other bridges
+        aliases:
+          - "gitlab-runr2.${GITLAB_DOMAIN}"
+    volumes:
+      - gitlab-runr2-dir:/gitlab-dir
+      - "./labs:/labs"
+      - gitlab-shared-dir:/gitlab-share
+networks:
+  gitlab-net:
+    driver: bridge
+    attachable: true
+    name: gitlab-bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: "${GITLAB_SUBNET}"
+volumes:
+  gitlab-clnt1-dir:
+  gitlab-clnt2-dir:
+  gitlab-srv-dir:
+  gitlab-shared-dir:
+  gitlab-runr1-dir:
+  gitlab-runr2-dir:

@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-pvc-dp # persistent volume through volume claim
+  namespace: mod-08-ns
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: nginx-pvc
+  template:
+    metadata:
+      labels:
+        app: nginx-pvc
+    spec:
+      containers:
+      - name: nginx-pvc
+        image: nginx
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - name: nginx-pvc
+          mountPath: /usr/share/nginx-web
+      volumes: 
+      - name: nginx-pvc
+        persistentVolumeClaim:
+          claimName: nginx-pvc

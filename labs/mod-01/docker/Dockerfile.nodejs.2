@@ -1,0 +1,31 @@
+FROM node:10-alpine
+
+RUN npm install -g @vercel/ncc
+
+RUN mkdir -p /home/node/app/node_modules && chown -R node:node /home/node/app
+
+WORKDIR /home/node/app
+
+COPY ./node_project/package.json ./
+
+USER node
+
+RUN npm config set package-lock false
+
+RUN npm install --production
+
+COPY --chown=node:node node_project/ .
+
+RUN mkdir dist && ncc build app.js -o dist -C
+
+RUN rm -rf node_modules && rm -rf views && rm -rf app.js && rm -rf package.json
+
+USER root
+
+RUN npm uninstall -g @vercel/ncc
+
+USER node 
+
+EXPOSE 8080
+
+CMD [ "node", "dist/index.js" ]

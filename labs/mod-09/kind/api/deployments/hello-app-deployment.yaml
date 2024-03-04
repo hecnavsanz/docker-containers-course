@@ -1,0 +1,18 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hello-app-dp
+  namespace: default
+spec:
+  selector:
+    matchLabels:
+      app: hello-app-pod
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: hello-app-pod
+    spec:
+      containers:
+      - name: hello-app-pod
+        image: localhost:5001/hello-app:1.0

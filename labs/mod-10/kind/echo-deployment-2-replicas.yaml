@@ -1,0 +1,18 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: echo-dp
+  namespace: lab-03-ns
+spec:
+  selector:
+    matchLabels:
+      app: echo-app
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: echo-app
+    spec:
+      containers:
+      - name: echo-web
+        image: k8s.gcr.io/echoserver:1.4

@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx-helloworld-pod
+  namespace: mod-07-ns
+spec:
+  containers:
+  - name: nginx-cntr
+    image: nginx:1.22.0
+    ports:
+    - containerPort: 80
+  - name: helloworld-cntr
+    image: docker.io/hectornsanz/helloworld:1.0
+    ports:
+    - containerPort: 8888

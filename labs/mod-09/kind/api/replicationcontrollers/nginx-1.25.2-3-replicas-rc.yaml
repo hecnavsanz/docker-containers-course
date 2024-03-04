@@ -1,0 +1,23 @@
+---
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: nginx-rc
+  namespace: mod-07-ns
+  labels:
+    rsc: nginx-rc
+spec:
+  replicas: 3
+  selector:
+    app: nginx-rc
+  template:
+    metadata:
+      name: nginx-pod
+      labels:
+        app: nginx-rc
+    spec:
+      containers:
+      - name: nginx-cntr
+        image: nginx:1.25.2
+        ports:
+        - containerPort: 80

@@ -1,0 +1,14 @@
+zone "{{ domain }}" {
+    type master;
+    file "/var/cache/bind/zones/db.{{ domain }}";
+};
+
+zone "{{ gitlabsrv_pub_ip.split('.')[0:3][::-1] | join( '.' ) }}.in-addr.arpa" {
+    type master;
+    file "/var/cache/bind/zones/db.{{ gitlabsrv_pub_ip.split('.')[0:3] | join( '.' ) }}";
+};
+
+zone "{{ gitlabsrv_priv_ip.split('.')[0:3][::-1] | join( '.' ) }}.in-addr.arpa" {
+    type master;
+    file "/var/cache/bind/zones/db.{{ gitlabsrv_priv_ip.split('.')[0:3] | join( '.' ) }}";
+};

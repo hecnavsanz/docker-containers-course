@@ -1,0 +1,16 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: echo-app-lb-svc
+  namespace: mod-08-ns
+  labels:
+    rsc: echo-app
+spec:
+  type: LoadBalancer
+  selector:
+    rsc: echo-app
+  ports:
+    - name: echo-app-lb-port
+      port: 5678
+      targetPort: 8080
