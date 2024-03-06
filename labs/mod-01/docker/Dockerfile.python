@@ -1,0 +1,16 @@
+ARG pyver=3.9
+
+FROM python:${pyver}
+
+ARG dirname=app
+
+ENV MSG=Hi
+
+SHELL ["/bin/bash", "-c"]
+RUN mkdir -p /${dirname}
+
+RUN echo "print('${MSG}')" > /${dirname}/helloworld.py
+
+WORKDIR /${dirname}
+
+CMD ["/usr/bin/bash", "-c", "echo $MSG; python3 helloworld.py"]

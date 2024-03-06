@@ -1,0 +1,28 @@
+FROM fedora:latest
+
+LABEL "io.core"="HelloWorld"
+LABEL "author"="Hector Navarro"
+LABEL "version"="1.0"
+
+RUN dnf update -y; \
+    dnf install -y golang procps; \
+    mkdir -p /app; \
+    useradd -u 12345 pepito; \
+    chown pepito /app
+
+USER pepito
+
+WORKDIR /app
+
+COPY src/* .
+
+RUN go build helloworld.go
+
+HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 CMD [ "/usr/bin/curl -f http://localhost:8080 || exit 1" ]
+
+STOPSIGNAL SIGQUIT
+
+CMD ["/app/helloworld"]
+
+
+
