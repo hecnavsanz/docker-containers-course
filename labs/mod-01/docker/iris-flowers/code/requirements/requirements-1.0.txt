@@ -1,0 +1,15 @@
+# refer https://docs.scipy.org/doc/scipy/dev/toolchain.html#building-scipy
+# refer https://docs.scipy.org/doc/scipy/dev/toolchain.html#numpy
+# refer https://matplotlib.org/3.8.0/devel/min_dep_policy.html#list-of-dependency-versions
+# refer https://pandas.pydata.org/docs/getting_started/install.html#python-version-support
+# refer https://scikit-learn.org/stable/install.html#installing-the-latest-release
+
+# this version shows ml packages not patched up to the latest bug release <major>:<minor>:<bug>
+# for example in the pandas 2.0.2 package the latest bug release is 2.0.3
+
+#   - ml version:     1.0 (packages below) NOT COMPATIBLE WITH PYTHON 3.11 AND ABOVE
+scipy==1.7.2
+numpy==1.22.3
+matplotlib==3.7.1
+pandas==2.0.2
+scikit-learn==1.2.1

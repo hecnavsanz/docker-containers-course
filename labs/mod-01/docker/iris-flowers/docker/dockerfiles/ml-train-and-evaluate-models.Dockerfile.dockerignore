@@ -1,0 +1,9 @@
+# Dockerignore file for the ml-train-and-eval-models Dockerfile
+#   these contents will be ignored when ADD'd or COPY'd the content
+#   in the code directory
+code/modules/__pycache__
+code/requirements
+code/test-*.py
+code/ml-pkg-ver.py
+code/make-predictions-with-best-ml-model.py
+code/predict-with-best-model-entrypoint.sh

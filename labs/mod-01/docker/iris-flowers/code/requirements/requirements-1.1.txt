@@ -1,0 +1,16 @@
+# refer https://docs.scipy.org/doc/scipy/dev/toolchain.html#building-scipy
+# refer https://docs.scipy.org/doc/scipy/dev/toolchain.html#numpy
+# refer https://matplotlib.org/3.8.0/devel/min_dep_policy.html#list-of-dependency-versions
+# refer https://pandas.pydata.org/docs/getting_started/install.html#python-version-support
+# refer https://scikit-learn.org/stable/install.html#installing-the-latest-release
+
+# this version shows ml packages patched up to the latest bug release <major>:<minor>:<bug>
+# for example in the matplotlib 3.7.3 package, this release is the latest bug release up
+#   to the date this script was created
+
+#   - ml version:     1.1 (packages below) NOT COMPATIBLE WITH PYTHON 3.11
+scipy==1.7.3
+numpy==1.22.4
+matplotlib==3.7.3
+pandas==2.0.3
+scikit-learn==1.2.2

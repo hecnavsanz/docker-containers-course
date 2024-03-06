@@ -1,0 +1,15 @@
+# refer https://docs.scipy.org/doc/scipy/dev/toolchain.html#building-scipy
+# refer https://docs.scipy.org/doc/scipy/dev/toolchain.html#numpy
+# refer https://matplotlib.org/3.8.0/devel/min_dep_policy.html#list-of-dependency-versions
+# refer https://pandas.pydata.org/docs/getting_started/install.html#python-version-support
+# refer https://scikit-learn.org/stable/install.html#installing-the-latest-release
+
+# this version shows ml packages patched always up to the latest major, minor and bug releases <major>:<minor>:<bug>
+# for example in the matplotlib package, it will be installed the latest release for the python version used
+
+#   - ml version:     2.1 (packages below)
+scipy
+numpy
+matplotlib
+pandas
+scikit-learn
