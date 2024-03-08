@@ -1,7 +1,51 @@
 services:
   web:
-    build: .
+    build: 
+      context: .
+      dockerfile: Dockerfile
+      tags: ["web:1.0"]
+    hostname: ${WEBHOST}
+    deploy:
+      resources:
+        limits:
+          cpus: 2
+          memory: 128M
+      restart_policy:
+        condition: on-failure
     ports:
       - "8000:5000"
+    networks:
+      app-net:
+        ipv4_address: 10.0.10.20
+    volumes:
+      - web-data:/web
+      - shared-data:/shared
+      - type: bind
+        source: ./bind-dir
+        target: /shared-bind-dir
   redis:
     image: "redis:alpine"
+    hostname: ${REDISHOST}
+    ports:
+      - "6379:${REDISPORT}"
+    networks:
+      app-net:
+        ipv4_address: 10.0.10.100
+    volumes:
+      - redis-data:/data
+      - shared-data:/shared
+
+networks:
+  app-net:
+    driver: bridge
+    attachable: true
+    name: redis-net
+    ipam:
+      driver: default
+      config:
+        - subnet: 10.0.10.0/24
+
+volumes:
+  redis-data:
+  web-data:
+  shared-data:
