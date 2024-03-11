@@ -1,3 +1,3 @@
-module core.io/helloworld
+module ackeelabs.io/helloworld
 
-go 1.18
+go 1.22
